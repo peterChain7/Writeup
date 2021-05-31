@@ -1,0 +1,40 @@
+QUESTION: Can you get decode image
+  i.Here we need a little think since we have to decode an image. But we have a file udomflag.txt..
+so lets look the type of file 
+
+                                                                                                                                                                              
+┌──(chain㉿peterChain)-[~/…/tryhackme/cyrange/W2/test]
+└─$ file Udomflag.txt   
+Udomflag.txt: ASCII text, with very long lines, with no line terminators
+
+We can see the type of file is ASCII text which is normal text. 
+
+ii. so if we open a file with cat command
+
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ cat Udomflag.txt  
+
+The output is wrong weird text but at the end we can see the file is base64..There are two solutions here
+
+1. ONLINE SOLUTION
+ since we have a base64 file which we need to conver to image then is googled how to conver base64 to image file i got this site "https://base64.guru/converter/decode/image" os open that text file with editor of your favourite then copy those txt pase then click the button bellow  "base64 to image" Then wait for "MIRACLE"
+
+2. COMMAND LINE:
+ we have a text file right? then lets pipe it to make an image.. for my case a made a file known peterChain7.jpg
+
+so lets run the bellow command
+    i. Converting the text file to image file name (peterChain7.jpg) 
+                                                                                                                                                                
+┌──(chain㉿peterChain)-[~/…/tryhackme/cyrange/W2/test]
+└─$ cat Udomflag.txt| base64 -d >peterChain7.jpg
+     ii. if we list we had an image file called peterChain7.jpg 
+                                                                                                                                                                         
+┌──(chain㉿peterChain)-[~/…/tryhackme/cyrange/W2/test]
+└─$ ls                  
+peterChain7.jpg  Udomflag.txt
+
+ iii.  Opening an  image with xdg-open tool                                                                                                                                                  
+┌──(chain㉿peterChain)-[~/…/tryhackme/cyrange/W2/test]
+└─$ xdg-open peterChain7.jpg 
+                                  
+GOOD LUCK: Hope you seen something interesting in am image                                  
