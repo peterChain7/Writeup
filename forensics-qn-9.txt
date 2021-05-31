@@ -1,0 +1,68 @@
+QUESTION:
+  Serial number
+The investigator needs to find the serial number of SANDISK USB flash drive which was connected to the machine he investigates.Can you help him
+
+we have to download  system.evtx file then lets check the type of file.
+
+
+i.It is a MS Windows system log file...
+                                                                                                                                                                             
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ file System.evtx 
+System.evtx: MS Windows Vista Event Log, 10 chunks (no. 9 in use), next record no. 1707
+
+
+FOR THE CASE Of WINDOWS OPERATING SYSTEM OPENIN G THIS FILE IS VERY EASY
+   You can use windows operating system and in search bar look for "event viewer" then open this system.evtx file then find for events containing SANDISK string or pnp (plug and play)
+
+
+               FOR THE CASE OF LINUX I LITTLE BIT HASLE:
+ 
+ii. Now lets google "how to open windows system log file in linux"
+     A) so i found many answer but you can download a registry viewer for linux and run it to see the contents of a file
+     B) I found one tool in github called "evtx_dump-v0.7.2-x86_64-unknown-linux-gnu" yo can use this also
+     C) Also you can use python to complish this, follow the below commands then export the events as xml. For my case i saved as "petro.xml"
+            i. sudo pip install python-evtx
+            ii  python /usr/bin/evtx_dump.py System.evtx > petro.xml
+             After exporting the events you  can rename the file again for my case i renamed ==> chain.txt 
+               
+              └─$ mv petro.xml petro.txt
+                
+  then used my favourite "pluma text editor to open it"
+
+Then after opening with pluma editor i searched for "SANDISK" since is what we a loking for according to question.
+
+ WHILE LOKING FOR SERIAL NUMBER I FOUND:
+
+<UserData>
+    <InstallDeviceID xmlns:auto-ns2="http://schemas.microsoft.com/win/2004/08/events" xmlns="http://manifests.microsoft.com/win/2004/08/windows/userpnp">
+      <DriverName>FileRepository\volume.inf_x86_neutral_6dee0205881d1a1d\volume.inf</DriverName>
+      <DriverVersion>6.1.7601.17514</DriverVersion>
+      <DriverProvider>Microsoft</DriverProvider>
+      <DeviceInstanceID>STORAGE\VOLUME\_??_USBSTOR#DISK&amp;VEN_SANDISK&amp;PROD_ULTRA_USB_3.0&amp;REV_1.00#4C530000080406123243&amp;0#{53F56307-B6BF-11D0-94F2-00A0C91EFB8B}</DeviceInstanceID>
+      <SetupClass>71A27CDD-812A-11D0-BEC7-08002BE2092F</SetupClass>
+      <RebootOption>false</RebootOption>
+      <UpgradeDevice>false</UpgradeDevice>
+      <IsDriverOEM>false</IsDriverOEM>
+      <InstallStatus>0x0</InstallStatus>
+      <DriverDescription>Generic volume</DriverDescription>
+    </InstallDeviceID>
+  </UserData>
+
+
+
+SO we can google the format of SANDISK serial number then found it, For our question the serial number for SANDISK USB  which was connected was "4C530000080406123243"
+
+
+
+But for our challenge we need the md5 hash for the serial number... So let's do it in terminal.
+                                                                                                                                                                                        
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ echo -n "4C530000080406123243"|md5sum                      
+a46a2bae610f55525c5995a5b831c768 
+
+
+DONE:
+
+GOOD LUCK:
+
