@@ -1,0 +1,262 @@
+QUESTION5: Do you remember basic? .Then lets play game
+ lETS START Hunting for flag in this question.
+
+Fist download file and look for the type of file with "file command"  as seen bellow
+
+    We can see also it is ELF linux executable 
+                                                                                                                                                                             
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ file reverse2 
+reverse2: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=a426dcf8ed3de8cb02f3ee4f38ee36b4ed568519, not stripped
+    so lets make it executable with chmod
+                                                                                                                                                                              
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ sudo chmod +x reverse2                                                   
+[sudo] password for chain: 
+                             Done.
+ so lets start with basic.
+  
+ 1. Then let's run the given executable
+                                                                                                                                                                            
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ ./reverse2
+Enter your input:
+how are you david
+Always dig deeper
+
+ It asks for our input so i tried "how are you david" FAILLED AT ALL
+
+
+2. strings
+
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ strings reverse2                        
+/lib64/ld-linux-x86-64.so.2
+libc.so.6
+strncmp
+__isoc99_scanf
+puts
+__stack_chk_fail
+strlen
+atoi
+__libc_start_main
+__gmon_start__
+GLIBC_2.7
+GLIBC_2.4
+GLIBC_2.2.5
+UH-`
+AWAVA
+AUATL
+[]A\A]A^A_
+Enter your input:
+Good game
+Always dig deeper
+
+
+So you can see above it asks for our input and if incorrect the message is "Always dig deeper"
+
+
+3.radare2
+  lets open it in debug mode with radare2
+   
+      BASIC-OUTPUTS
+
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ radare2 -d reverse2
+Process with PID 14327 started...
+= attach 14327 14327
+bin.baddr 0x00400000
+Using 0x400000
+asm.bits 64
+[0x7f7476c14090]> aaa
+[x] Analyze all flags starting with sym. and entry0 (aa)
+[x] Analyze function calls (aac)
+[x] Analyze len bytes of instructions for references (aar)
+[x] Check for vtables
+[TOFIX: aaft can't run in debugger mode.ions (aaft)
+[x] Type matching analysis for all functions (aaft)
+[x] Propagate noreturn information
+[x] Use -AA or aaaa to perform additional experimental analysis.
+[0x7f7476c14090]> afl
+0x004005e0    1 41           entry0
+0x004005a0    1 6            sym.imp.__libc_start_main
+0x00400610    4 50   -> 41   sym.deregister_tm_clones
+0x00400650    4 58   -> 55   sym.register_tm_clones
+0x00400690    3 28           sym.__do_global_dtors_aux
+0x004006b0    4 38   -> 35   entry.init0
+0x00400940    1 2            sym.__libc_csu_fini
+0x00400944    1 9            sym._fini
+0x004006d6    7 157          sym.strcmp_
+0x004008d0    4 101          sym.__libc_csu_init
+0x00400773    6 251          main
+0x0040086e    4 93           sym.check
+0x00400528    3 26           sym._init
+0x004005d0    1 6            sym..plt.got
+0x00400560    1 6            sym.imp.strncmp
+0x00400570    1 6            sym.imp.puts
+0x00400580    1 6            sym.imp.strlen
+0x00400590    1 6            sym.imp.__stack_chk_fail
+0x004005b0    1 6            sym.imp.atoi
+0x004005c0    1 6            sym.imp.__isoc99_scanf
+[0x7f7476c14090]> pdf@main
+            ; DATA XREF from entry0 @ 0x4005fd
+            ; CALL XREF from sym.check @ 0x4008c3
+┌ 251: int main (int argc, char **argv, char **envp);
+│           ; var int64_t var_70h @ rbp-0x70
+│           ; var int64_t var_64h @ rbp-0x64
+│           ; var int64_t var_54h @ rbp-0x54
+│           ; var int64_t var_50h @ rbp-0x50
+│           ; var int64_t var_30h @ rbp-0x30
+│           ; var int64_t var_2fh @ rbp-0x2f
+│           ; var int64_t var_2eh @ rbp-0x2e
+│           ; var int64_t var_2dh @ rbp-0x2d
+│           ; var int64_t var_2ch @ rbp-0x2c
+│           ; var int64_t var_2bh @ rbp-0x2b
+│           ; var int64_t var_2ah @ rbp-0x2a
+│           ; var int64_t var_29h @ rbp-0x29
+│           ; var int64_t var_28h @ rbp-0x28
+│           ; var int64_t var_27h @ rbp-0x27
+│           ; var int64_t var_26h @ rbp-0x26
+│           ; var int64_t var_25h @ rbp-0x25
+│           ; var int64_t var_24h @ rbp-0x24
+│           ; var int64_t var_23h @ rbp-0x23
+│           ; var int64_t var_22h @ rbp-0x22
+│           ; var int64_t var_21h @ rbp-0x21
+│           ; var int64_t var_20h @ rbp-0x20
+│           ; var int64_t var_1fh @ rbp-0x1f
+│           ; var int64_t var_1eh @ rbp-0x1e
+│           ; var int64_t var_1dh @ rbp-0x1d
+│           ; var int64_t var_1ch @ rbp-0x1c
+│           ; var int64_t var_1bh @ rbp-0x1b
+│           ; var int64_t var_1ah @ rbp-0x1a
+│           ; var int64_t var_19h @ rbp-0x19
+│           ; var int64_t var_18h @ rbp-0x18
+│           ; var int64_t var_17h @ rbp-0x17
+│           ; var int64_t var_16h @ rbp-0x16
+│           ; var int64_t var_15h @ rbp-0x15
+│           ; var int64_t var_8h @ rbp-0x8
+│           ; arg int argc @ rdi
+│           ; arg char **argv @ rsi
+│           0x00400773      55             push rbp
+│           0x00400774      4889e5         mov rbp, rsp
+│           0x00400777      4883ec70       sub rsp, 0x70
+│           0x0040077b      897d9c         mov dword [var_64h], edi    ; argc
+│           0x0040077e      48897590       mov qword [var_70h], rsi    ; argv
+│           0x00400782      64488b042528.  mov rax, qword fs:[0x28]
+│           0x0040078b      488945f8       mov qword [var_8h], rax
+│           0x0040078f      31c0           xor eax, eax
+│           0x00400791      c645d04f       mov byte [var_30h], 0x4f    ; 'O' ; 79
+│           0x00400795      c645d166       mov byte [var_2fh], 0x66    ; 'f' ; 102
+│           0x00400799      c645d264       mov byte [var_2eh], 0x64    ; 'd' ; 100
+│           0x0040079d      c645d36c       mov byte [var_2dh], 0x6c    ; 'l' ; 108
+│           0x004007a1      c645d444       mov byte [var_2ch], 0x44    ; 'D' ; 68
+│           0x004007a5      c645d553       mov byte [var_2bh], 0x53    ; 'S' ; 83
+│           0x004007a9      c645d641       mov byte [var_2ah], 0x41    ; 'A' ; 65
+│           0x004007ad      c645d77c       mov byte [var_29h], 0x7c    ; '|' ; 124
+│           0x004007b1      c645d833       mov byte [var_28h], 0x33    ; '3' ; 51
+│           0x004007b5      c645d974       mov byte [var_27h], 0x74    ; 't' ; 116
+│           0x004007b9      c645da58       mov byte [var_26h], 0x58    ; 'X' ; 88
+│           0x004007bd      c645db62       mov byte [var_25h], 0x62    ; 'b' ; 98
+│           0x004007c1      c645dc33       mov byte [var_24h], 0x33    ; '3' ; 51
+│           0x004007c5      c645dd32       mov byte [var_23h], 0x32    ; '2' ; 50
+│           0x004007c9      c645de7e       mov byte [var_22h], 0x7e    ; '~' ; 126
+│           0x004007cd      c645df58       mov byte [var_21h], 0x58    ; 'X' ; 88
+│           0x004007d1      c645e033       mov byte [var_20h], 0x33    ; '3' ; 51
+│           0x004007d5      c645e174       mov byte [var_1fh], 0x74    ; 't' ; 116
+│           0x004007d9      c645e258       mov byte [var_1eh], 0x58    ; 'X' ; 88
+│           0x004007dd      c645e340       mov byte [var_1dh], 0x40    ; '@' ; 64
+│           0x004007e1      c645e473       mov byte [var_1ch], 0x73    ; 's' ; 115
+│           0x004007e5      c645e558       mov byte [var_1bh], 0x58    ; 'X' ; 88
+│           0x004007e9      c645e660       mov byte [var_1ah], 0x60    ; '`' ; 96
+│           0x004007ed      c645e734       mov byte [var_19h], 0x34    ; '4' ; 52
+│           0x004007f1      c645e874       mov byte [var_18h], 0x74    ; 't' ; 116
+│           0x004007f5      c645e958       mov byte [var_17h], 0x58    ; 'X' ; 88
+│           0x004007f9      c645ea74       mov byte [var_16h], 0x74    ; 't' ; 116
+│           0x004007fd      c645eb7a       mov byte [var_15h], 0x7a    ; 'z' ; 122
+│           0x00400801      bf54094000     mov edi, str.Enter_your_input: ; 0x400954 ; "Enter your input:"
+│           0x00400806      e865fdffff     call sym.imp.puts           ; int puts(const char *s)
+│           0x0040080b      488d45b0       lea rax, [var_50h]
+│           0x0040080f      4889c6         mov rsi, rax
+│           0x00400812      bf66094000     mov edi, 0x400966
+│           0x00400817      b800000000     mov eax, 0
+│           0x0040081c      e89ffdffff     call sym.imp.__isoc99_scanf ; int scanf(const char *format)
+│           0x00400821      488d55d0       lea rdx, [var_30h]
+│           0x00400825      488d45b0       lea rax, [var_50h]
+│           0x00400829      4889d6         mov rsi, rdx
+│           0x0040082c      4889c7         mov rdi, rax
+│           0x0040082f      e8a2feffff     call sym.strcmp_
+│           0x00400834      8945ac         mov dword [var_54h], eax
+│           0x00400837      837dac00       cmp dword [var_54h], 0
+│       ┌─< 0x0040083b      750c           jne 0x400849
+│       │   0x0040083d      bf69094000     mov edi, str.Good_game      ; 0x400969 ; "Good game"
+│       │   0x00400842      e829fdffff     call sym.imp.puts           ; int puts(const char *s)
+│      ┌──< 0x00400847      eb0a           jmp 0x400853
+│      │└─> 0x00400849      bf73094000     mov edi, str.Always_dig_deeper ; 0x400973 ; "Always dig deeper"
+│      │    0x0040084e      e81dfdffff     call sym.imp.puts           ; int puts(const char *s)
+│      │    ; CODE XREF from main @ 0x400847
+│      └──> 0x00400853      b800000000     mov eax, 0
+│           0x00400858      488b4df8       mov rcx, qword [var_8h]
+│           0x0040085c      6448330c2528.  xor rcx, qword fs:[0x28]
+│       ┌─< 0x00400865      7405           je 0x40086c
+│       │   0x00400867      e824fdffff     call sym.imp.__stack_chk_fail ; void __stack_chk_fail(void)
+│       └─> 0x0040086c      c9             leave
+└           0x0040086d      c3             ret
+[0x7f7476c14090]> 
+
+
+So examining the main function through "pdf@main" we can see something here written vertically from offset " 0x00400791" to offset "0x004007fd"
+
+so if the input is that strings wrriten verticall then the message will be "Good game" and hope we may get our flag
+ you can copy then and use as input but to simplify life, Since there is a value being compared then lets use one tool Thanks at blackninja23 for this challenge hahahahahah!!!!
+
+
+4.ltrace 
+    You can find it it is very good when it comes to reverse comparing some user inputs
+OUTPUTS from ltrace
+
+                                                                                                                                                                              
+                                                                                                                                                                              
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ ltrace ./reverse2
+__libc_start_main(0x400773, 1, 0x7ffda13df328, 0x4008d0 <unfinished ...>
+puts("Enter your input:"Enter your input:
+)                                                                                  = 18
+__isoc99_scanf(0x400966, 0x7ffda13df1e0, 0, 0x7f9511269f33blackninja23
+)                                                = 1
+strlen("blackninja23")                                                                                     = 12
+strlen("blackninja23")                                                                                     = 12
+strlen("blackninja23")                                                                                     = 12
+strlen("blackninja23")                                                                                     = 12
+strlen("blackninja23")                                                                                     = 12
+strlen("blackninja23")                                                                                     = 12
+strlen("blackninja23")                                                                                     = 12
+strlen("blackninja23")                                                                                     = 12
+strlen("blackninja23")                                                                                     = 12
+strlen("blackninja23")                                                                                     = 12
+strlen("blackninja23")                                                                                     = 12
+strlen("blackninja23")                                                                                     = 12
+strlen("blackninja23")                                                                                     = 12
+strncmp("blackninja23", "OfdlDSA|3tXb32~X3tX@sX`4tXtz", 28)                                                = 19
+puts("Always dig deeper"Always dig deeper
+)                                                                                  = 18
++++ exited (status 0) +++
+
+so we  can  see than i intered "blackninja23" then this "blackninja23 is compared with one string we seen written vertically in 3 above. so in here you may see the strings are written well look at neer last line 
+strncmp("blackninja23", "OfdlDSA|3tXb32~X3tX@sX`4tXtz", 28)                                                = 19
+
+
+So our input was "fdlDSA|3tXb32~X3tX@sX`4tXtz" so let's run with input to seen miracle.
+                                                                                                                                                                               
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ ./reverse2         
+Enter your input:
+OfdlDSA|3tXb32~X3tX@sX`4tXtz
+Good game
+
+
+Waooooh!!!!!!!!!..... This is the requered input since we said if we a wrong the message is "Always dig deeper" and if correct the message is "Good game" so we found it
+
+GOOD LUCK:
+
+
+
