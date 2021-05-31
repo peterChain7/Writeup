@@ -1,0 +1,168 @@
+QUESTION: BlackNinja23 hide flag with his super password.Find the password to and get the flag
+ we have downloaded the file called reverse1 so lets get started
+  
+  I applied the basic method like stings commands but found nothing interesting
+  
+More on using tools
+  Fistlly i checked the type of file 
+   FOUND, It is linux executable 
+                                                                                                                                                                              
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ file reverse1 
+reverse1: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=b799eb348f3df15f6b08b3c37f8feb269a60aba7, not stripped
+
+Then make it as executable so that you can execute it 
+                                                                                                                                                                               
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ sudo chmod +x reverse1 
+
+Then tried to run it with bash in the terminal 
+ooooooh!!!!!
+                                                                                                                                                                                
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ ./reverse1                                                                                                                                                          130 ⨯
+Usage: ./reverse1 password
+
+So it needs password to run it so i tried to google on "How to run an executable with  password"
+ I foung it shoulb run as ./reverse1 <password>. So issue was to find password.
+   I tried to run strings but nothis interesting 
+
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ strings reverse1                        
+/lib/ld-linux.so.2
+libc.so.6
+_IO_stdin_used
+puts
+printf
+memset
+strcmp
+__libc_start_main
+/usr/local/lib:$ORIGIN
+__gmon_start__
+GLIBC_2.0
+PTRh 
+j3jA
+[^_]
+UWVS
+t$,U
+[^_]
+Usage: %s password
+super_secret_password
+Access denied.
+Access granted.
+
+  From above you can see ones the password is incorrect the message is "access denied" and if correct the message is "Access granted" let'e try it
+  
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ ./reverse1 peterChain7          
+Access denied.
+
+So we need to find password to run it
+
+          IT IS TOOLS TIME, hahahaahh!!!!
+1.radare2
+    so i used it to run the reverse1 in debug mode with radare2
+
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ radare2 -d reverse1
+Process with PID 13984 started...
+= attach 13984 13984
+bin.baddr 0x08048000
+Using 0x8048000
+asm.bits 32
+glibc.fc_offset = 0x00148
+[0xf7ed40b0]> aaa
+[x] Analyze all flags starting with sym. and entry0 (aa)
+[x] Analyze function calls (aac)
+[x] Analyze len bytes of instructions for references (aar)
+[x] Check for vtables
+[TOFIX: aaft can't run in debugger mode.ions (aaft)
+[x] Type matching analysis for all functions (aaft)
+[x] Propagate noreturn information
+[x] Use -AA or aaaa to perform additional experimental analysis.
+[0xf7ed40b0]> afl
+0x080483a0    1 33           entry0
+0x08048370    1 6            sym.imp.__libc_start_main
+0x080483e0    4 43           sym.deregister_tm_clones
+0x08048410    4 53           sym.register_tm_clones
+0x08048450    3 30           sym.__do_global_dtors_aux
+0x08048470    4 43   -> 40   entry.init0
+0x08048526    4 149          sym.giveFlag
+0x08048620    1 2            sym.__libc_csu_fini
+0x080483d0    1 4            sym.__x86.get_pc_thunk.bx
+0x08048624    1 20           sym._fini
+0x080485c0    4 93           sym.__libc_csu_init
+0x0804849b    6 139          main
+0x08048304    3 35           sym._init
+0x08048390    1 6            sym..plt.got
+0x08048340    1 6            sym.imp.strcmp
+0x08048350    1 6            sym.imp.printf
+0x08048360    1 6            sym.imp.puts
+0x08048380    1 6            sym.imp.memset
+[0xf7ed40b0]> pdf@main
+            ; DATA XREF from entry0 @ 0x80483b7
+┌ 139: int main (int argc, char **argv, char **envp);
+│           ; var int32_t var_4h @ ebp-0x4
+│           ; arg char **argv @ esp+0x24
+│           0x0804849b      8d4c2404       lea ecx, [argv]
+│           0x0804849f      83e4f0         and esp, 0xfffffff0
+│           0x080484a2      ff71fc         push dword [ecx - 4]
+│           0x080484a5      55             push ebp
+│           0x080484a6      89e5           mov ebp, esp
+│           0x080484a8      51             push ecx
+│           0x080484a9      83ec04         sub esp, 4
+│           0x080484ac      89c8           mov eax, ecx
+│           0x080484ae      833802         cmp dword [eax], 2
+│       ┌─< 0x080484b1      741d           je 0x80484d0
+│       │   0x080484b3      8b4004         mov eax, dword [eax + 4]
+│       │   0x080484b6      8b00           mov eax, dword [eax]
+│       │   0x080484b8      83ec08         sub esp, 8
+│       │   0x080484bb      50             push eax
+│       │   0x080484bc      6860860408     push str.Usage:__s_password_n ; 0x8048660 ; "Usage: %s password\n"
+│       │   0x080484c1      e88afeffff     call sym.imp.printf         ; int printf(const char *format)
+│       │   0x080484c6      83c410         add esp, 0x10
+│       │   0x080484c9      b801000000     mov eax, 1
+│      ┌──< 0x080484ce      eb4e           jmp 0x804851e
+│      │└─> 0x080484d0      8b4004         mov eax, dword [eax + 4]
+│      │    0x080484d3      83c004         add eax, 4
+│      │    0x080484d6      8b00           mov eax, dword [eax]
+│      │    0x080484d8      83ec08         sub esp, 8
+│      │    0x080484db      6874860408     push str.super_secret_password ; 0x8048674 ; "super_secret_password"
+│      │    0x080484e0      50             push eax
+│      │    0x080484e1      e85afeffff     call sym.imp.strcmp         ; int strcmp(const char *s1, const char *s2)
+│      │    0x080484e6      83c410         add esp, 0x10
+│      │    0x080484e9      85c0           test eax, eax
+│      │┌─< 0x080484eb      7417           je 0x8048504
+│      ││   0x080484ed      83ec0c         sub esp, 0xc
+│      ││   0x080484f0      688a860408     push str.Access_denied.     ; 0x804868a ; "Access denied."
+│      ││   0x080484f5      e866feffff     call sym.imp.puts           ; int puts(const char *s)
+│      ││   0x080484fa      83c410         add esp, 0x10
+│      ││   0x080484fd      b801000000     mov eax, 1
+│     ┌───< 0x08048502      eb1a           jmp 0x804851e
+│     ││└─> 0x08048504      83ec0c         sub esp, 0xc
+│     ││    0x08048507      6899860408     push str.Access_granted.    ; 0x8048699 ; "Access granted."
+│     ││    0x0804850c      e84ffeffff     call sym.imp.puts           ; int puts(const char *s)
+│     ││    0x08048511      83c410         add esp, 0x10
+│     ││    0x08048514      e80d000000     call sym.giveFlag
+│     ││    0x08048519      b800000000     mov eax, 0
+│     ││    ; CODE XREFS from main @ 0x80484ce, 0x8048502
+│     └└──> 0x0804851e      8b4dfc         mov ecx, dword [var_4h]
+│           0x08048521      c9             leave
+│           0x08048522      8d61fc         lea esp, [ecx - 4]
+└           0x08048525      c3             ret
+
+
+so looking offset 0x080484db  found a string is pushed and that string is "super_secret_password" look bellow
+
+    0x080484db      6874860408     push str.super_secret_password ; 0x8048674 ; "super_secret_password"
+
+so i took it and run my reverse again 
+
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ ./reverse1 super_secret_password
+Access granted.
+flag{if_i_submit_this_flag_then_i_will_get_points}
+                                                                      
+So now i have got A blackninja23 hidden flag
+
+
