@@ -1,0 +1,101 @@
+QUESTION: Can You Crack the Uncrackable
+
+lets download the uncrackable file uncrackable.tar then manually unzip it.
+  
+AFTER UNZIPING IT we have file (sec2.pdf) and one directory (data) here.
+
+┌──(chain㉿peterChain)-[~/…/tryhackme/cyrange/W2/uncrackable]
+└─$ ls
+data  sec2.pdf
+===============================================
+ so lets try to open a pdf file sec.pdf
+
+                                                                                                                                                                              
+┌──(chain㉿peterChain)-[~/…/tryhackme/cyrange/W2/uncrackable]
+└─$ open sec2.pdf 
+                                                                                                                                                                              
+┌──(chain㉿peterChain)-[~/…/tryhackme/cyrange/W2/uncrackable]
+└─$ Opening in existing browser session.
+======================================
+The pdf file is password protected so to open it we need to have a password.
+   but for my case i tried all wordlist i have i totally FAILLED
+
+Then i moved to "data" dirctory/folder  i found many file some pictures and some are text files.... I guessed maybe they might be a wordlist..
+   so The issue was to remove extention so as to have/remain only with files without extention.
+
+    BY googling much i found two solutions.
+  
+
+i. using the sed command 
+     ls | sed s/.png//g |  sed s/.wav//g | sed s/.jpg//g | sed s/.gpn//g| tee wordlist.txt
+ii. using bash script
+
+       for i in *.jpg
+        do
+          mv -- "$i" "${i%.jpg}"
+        done 
+
+ For my case i used the second method "bash script" just save the above script in the file for my case i saved it as "m.sh" then you will be romoving extentions of files in the data directory. just change extention from the script then run again and again untill all extentions are removed then create  wordlist as follow
+   
+      AFTER REMOVING ALL EXTENTIONS THEN CREATE A WORDLIST IN DATA DIRECTORY:
+
+                                                                                                                                                                              
+┌──(chain㉿peterChain)-[~/…/cyrange/W2/uncrackable/data]
+└─$ ls * | tee wordlist.txt
+=====================================
+
+Then used 
+i. john the ripper
+ii. pdfcrack
+
+for the case of john you need to generate the hash of the file  as follows
+
+        i. lets locate  pdf2john program  
+                                                                                                                                                                           
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ locate pdf2john 
+/usr/share/john/pdf2john.pl
+
+ii. Lets run pdf2john to create a hash of a pdf
+                                                                                                                                                                              
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ /usr/share/john/pdf2john.pl sec2.pdf > myhash
+
+iii. Then our hash is as seen bellow
+                                                                                                                                                                              
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ cat hash     
+sec2.pdf:$pdf$2*3*128*-3904*1*16*9db3c812d6a0c898af95886f6d043eaa*32*44041e94111587f666acac56c794a44f00000000000000000000000000000000*32*1df5734e447cc82abf998e9befa24a81ca624be57d6759bb964b7c41ebc6a03a
+
+ THEN LET'S CRACK IT WITH JOHN
+
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ john --wordlist=../data/wordlist.txt hash
+=====================================After here you will find a password to open this pdf file
+
+for the case of pdfcrack no need to create the hash of the pdf,, just run as follows
+
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ pdfcrack -f sec2.pdf  data/wordlist.txt                                 
+PDF version 1.5
+Security Handler: Standard
+V: 2
+R: 3
+P: -3904
+Length: 128
+Encrypted Metadata: True
+FileID: 9db3c812d6a0c898af95886f6d043eaa
+U: 44041e94111587f666acac56c794a44f00000000000000000000000000000000
+O: 1df5734e447cc82abf998e9befa24a81ca624be57d6759bb964b7c41ebc6a03a
+found user-password: '2kqefH793Gn81YXXXXXXXXXGJd6zgfVBVhIKX'
+                                                                                                                                                                              
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ open goodbook
+                                                                                                                                                                              
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ Opening in existing browser session.
+==============================SO you can see the password, but you have to practise this since i have written extra XXXXX so as for you to go and try it
+                 
+      ===============THE LAST WRITEUP ABOUT UDOM CYBER CTF2===============================
+GOOD LUCK:
+
