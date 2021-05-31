@@ -1,0 +1,24 @@
+QUESTION:BaseCubic
+
+ we had a string below to decode 
+
+   JJHEYRKHKJFFOS2SI5CEOU2LINETKTCEJVKUUU2LLJCVKU2XKNLUOWSJKZDVCS2IJNLE4RSNJZJU4TCKJJLECVSKGVEFKNSUGJIEUNI=
+
+You can use cybercheff to decode the string or whatever but for me "AM IN LOVE WITH TERMINAL" since from googling i found the string is base32 so i used terminal to decode it, But first decode found the other strings so since i known the concept of "base32 repeater" so i decoded the string many times until found flag. CHECKIT OUT.
+
+   i. first time i got                  
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ echo "JJHEYRKHKJFFOS2SI5CEOU2LINETKTCEJVKUUU2LLJCVKU2XKNLUOWSJKZDVCS2IJNLE4RSNJZJU4TCKJJLECVSKGVEFKNSUGJIEUNI="| base32 -d
+JNLEGRJWKRGDGSKCI5LDMUJSKZEUSWSWGZIVGQKHKVNFMNSNLJJVAVJ5HU6T2PJ5 
+  
+   ii. second time i got                                                                                                                                
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ echo "JNLEGRJWKRGDGSKCI5LDMUJSKZEUSWSWGZIVGQKHKVNFMNSNLJJVAVJ5HU6T2PJ5"| base32 -d
+KVCE6TL3IBGV6Q2VIIZV6QSAGUZV6MZSPU======  
+   
+     iii. Third time i got my cake                                                                                                                                                              
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ echo "KVCE6TL3IBGV6Q2VIIZV6QSAGUZV6MZSPU======"| base32 -d
+UDOM{@M_CUB3_B@53_32}                                                                                                                                                                              
+
+
