@@ -1,0 +1,10 @@
+QUESTION 10: List names of all hiden files in the current directory.
+
+  just google it. 
+
+ ANSWER: ls -a
+
+QUESTION 11: Proper Command for showing previous command 
+just google it
+ 
+ANSWER: !!
