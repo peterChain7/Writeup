@@ -1,0 +1,69 @@
+QUESTION:Cybershell Loves to read this book .
+ Downloading we have goodbook.zip so we can unzip it manually and inside there in "goodbok" with no extention, So lets know the type of file 
+   i. ooh!! it is a pdf file
+
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ file goodbook    
+goodbook: PDF document, version 1.4
+
+
+   ii. Now lets look for an embeded file in this goodbook 
+┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
+└─$ binwalk goodbook    
+
+DECIMAL       HEXADECIMAL     DESCRIPTION
+--------------------------------------------------------------------------------
+0             0x0             PDF document, version: "1.4"
+240           0xF0            JPEG image data, JFIF standard 1.01
+192310        0x2EF36         Zlib compressed data, default compression
+192470        0x2EFD6         Zlib compressed data, default compression
+192665        0x2F099         Zlib compressed data, default compression
+193252        0x2F2E4         Zlib compressed data, default compression
+193447        0x2F3A7         Zlib compressed data, default compression
+194021        0x2F5E5         Zlib compressed data, default compression
+194216        0x2F6A8         Zlib compressed data, default compression
+194973        0x2F99D         Zlib compressed data, default compression
+195170        0x2FA62         Zlib compressed data, default compression
+196711        0x30067         Zlib compressed data, default compression
+196908        0x3012C         Zlib compressed data, default compression
+199210        0x30A2A         Zlib compressed data, default compression
+199407        0x30AEF         Zlib compressed data, default compression
+202640        0x31790         Zlib compressed data, default compression
+202837        0x31855         Zlib compressed data, default compression
+204636        0x31F5C         Zlib compressed data, default compression
+204833        0x32021         Zlib compressed data, default compression
+206326        0x325F6         JPEG image data, JFIF sta.........
+
+(IT IS CONTINUING I JUST COPIED A LITTLE  FOR DEMO) 
+
+So at the end we can see that this is a zip file alsoo.. lets now unzip this pdf file
+
+┌──(chain㉿peterChain)-[~/…/tryhackme/cyrange/W2/test]
+└─$ ls
+goodbook
+
+
+i. unziping goodbook 
+                                                                                                                                                                             
+┌──(chain㉿peterChain)-[~/…/tryhackme/cyrange/W2/test]
+└─$ unzip goodbook         
+Archive:  goodbook
+warning [goodbook]:  3167237 extra bytes at beginning or within zipfile
+  (attempting to process anyway)
+  inflating: flag.txt.txt  
+
+ii. waooh!! listing there is    esxtracted flag.txt.txt       
+                                                                                                                                                                              
+┌──(chain㉿peterChain)-[~/…/tryhackme/cyrange/W2/test]
+└─$ ls                                                                                                                                                                    1 ⨯
+flag.txt.txt  goodbook
+
+iii. to read the flag.txt.txt found my cake here
+                                                                                                                                                                              
+┌──(chain㉿peterChain)-[~/…/tryhackme/cyrange/W2/test]
+└─$ cat flag.txt.txt      
+TamilCTF{3xtr4cti0n_is_n0n3}  
+
+GOOD LUCK:    
+
+
