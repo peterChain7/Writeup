@@ -56,7 +56,7 @@ for the case of john you need to generate the hash of the file  as follows
 └─$ locate pdf2john 
 /usr/share/john/pdf2john.pl
 
-ii. Lets run pdf2john to create a hash of a pdf
+ii. Lets run pdf2john to create a hash of a pdf.
                                                                                                                                                                               
 ┌──(chain㉿peterChain)-[~/…/security_related/tryhackme/cyrange/W2]
 └─$ /usr/share/john/pdf2john.pl sec2.pdf > myhash
@@ -98,4 +98,6 @@ found user-password: '2kqefH793Gn81YXXXXXXXXXGJd6zgfVBVhIKX'
                  
       ===============THE LAST WRITEUP ABOUT UDOM CYBER CTF2===============================
 GOOD LUCK:
+wef wenfkrjeklfberjklfdsv
+
 
