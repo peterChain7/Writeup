@@ -12,7 +12,7 @@
     
   ### for any comments or addtion or any issue contact me through
   
-  email: petermwemsi@gmail.com <br>
+<!--   email: petermwemsi@gmail.com <br> -->
   twiter: https://www.twitter.com/peterChain7 <br>
   linkedin : https://www.linkedin.com/in/peter-mwemsi-29861a215/ <br>
          written by peterChain7
