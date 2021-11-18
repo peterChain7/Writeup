@@ -1,4 +1,4 @@
-## Room backtikcs on tryhackme
+## Room  is backtikcs on tryhackme
 
 The room will let you practise php fileter bypass
 
@@ -61,3 +61,13 @@ PHP source codes
      
             ${print `ls`}
  so you can use any payload to get a reverse shell as web user.
+ 
+ ### prevelege escation
+ 
+ 
+   * look at crontabs you may find editable to everybody scripts and it is run as user john so you cat get the userjohn shell now
+   * To be root just find suid binaries and read any file using the privilege of find command
+ 
+             find / -perm -u=s -type f 2>/dev/null
+             
+   
