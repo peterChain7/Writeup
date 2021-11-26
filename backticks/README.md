@@ -130,13 +130,13 @@ It is nothing but a was to use backticks tricks to bypass php filters
            ![](images/page.png)
      * Viewing source codes we found there i some comments which is suspecious and it looks like base64 encoded string   
          
-             ![](images/footer.png)
+          ![](images/footer.png)
          so decoding it as `base64` we can see the out put is
               
                  echo "L2JhY2t0aWNrcwo="|base64 -d                                                                   130 ⨯
                        /backticks
                        
- so goind to `http://<ip>/backticks` we can see the login page now
+ so going to `http://<ip>/backticks` we can see the login page now
    trying the deafult usernames and passwords found that `username=admin&& password=admin`
    loggin in we can see that there is a ordering system. Going through it we can see there is `game` to play..
     trying `xss` was possible.
@@ -144,7 +144,7 @@ It is nothing but a was to use backticks tricks to bypass php filters
       
          <script>alert('xss')</script>
          
-  Since our aim is to gain full access to the system so let's try to execute system comand by `php code injection`
+  Since our aim is to gain full access to the system, so let's try to execute system comand by `php code injection`
   many payloads failed but since from `ftp server` i learned something `backticks` i tryed to use backticks triks to execute commandds
   
   
