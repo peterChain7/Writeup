@@ -6,7 +6,7 @@
  here is how you can download all files ones and read one by one. Just run in your terminal as seen in the image below  you will have a folder named writeup...Then open it and read one by one according to question number.
     ![](images/image.png) <br> *image on how to copy the writeup*
     
-    sudo git clone https://github.com/peterChain7/Writeup
+    sudo git clone https://github.com/peterchain7/Writeup
     cd Writeup/
     ls
     
